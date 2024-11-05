@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Sound and Play</title>
+</head>
+<body>
+    <input type="file" id="audioFile" accept="audio/*">
+    <button id="playButton">Play Sound</button>
+
+    <script>
+        let audioBlob; // لتخزين Blob الصوت
+
+        document.getElementById('audioFile').addEventListener('change', function(event) {
+            const file = event.target.files[0]; // الحصول على الملف الأول
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // قراءة البيانات في شكل ArrayBuffer
+                    const arrayBuffer = e.target.result;
+
+                    // تحويل ArrayBuffer إلى Uint8Array
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    audioBlob = new Blob([uint8Array], { type: file.type }); // إنشاء Blob جديد
+                };
+
+                reader.readAsArrayBuffer(file); // قراءة الملف كـ ArrayBuffer
+            }
+        });
+
+        document.getElementById('playButton').addEventListener('click', function() {
+            if (audioBlob) {
+                const audioUrl = URL.createObjectURL(audioBlob); // إنشاء URL من Blob
+                const audio = new Audio(audioUrl); // إنشاء عنصر Audio جديد
+                audio.play(); // تشغيل الصوت
+            } else {
+                alert('Please upload an audio file first.');
+            }
+        });
+    </script>
+</body>
+</html>
+
